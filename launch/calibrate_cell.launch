@@ -1,0 +1,6 @@
+
+<launch>
+	<include file="$(find calib_robot_cell)/launch/calibrate_cell_NUC1.launch"/>
+	<include file="$(find calib_robot_cell)/launch/calibrate_cell_NUC2.launch"/>
+	<include file="$(find calib_robot_cell)/launch/calibrate_cell_PC.launch"/>
+</launch>

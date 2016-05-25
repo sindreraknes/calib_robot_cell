@@ -1,0 +1,5 @@
+<launch>
+	<include file="$(find calib_robot_cell)/launch/bundle_NUC1.launch"/>
+	<include file="$(find calib_robot_cell)/launch/bundle_NUC2.launch"/>
+	<include file="$(find calib_robot_cell)/launch/bundle_PC.launch"/>
+</launch>
