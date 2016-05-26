@@ -1,8 +1,6 @@
 #include "../include/calibCell.hpp"
 #include <iostream>
 
-
-
 CalibrateCell::CalibrateCell(int argc, char **argv):
     init_argc(argc),
     init_argv(argv)
@@ -63,7 +61,6 @@ void CalibrateCell::camPosCallback1(const ar_track_alvar_msgs::AlvarMarkersConst
     geometry_msgs::Quaternion quatMsg = cam_pos->markers.at(0).pose.pose.orientation;
     tf::Quaternion q(quatMsg.x, quatMsg.y, quatMsg.z, quatMsg.w);
 
-
     if(msgs == nrOfMsgs){
         std::cout << "Im done" << std::endl;
         subPose.shutdown();
@@ -72,7 +69,6 @@ void CalibrateCell::camPosCallback1(const ar_track_alvar_msgs::AlvarMarkersConst
 
     }
     addNewTransformation(cameraID,position,q);
-
 }
 
 Eigen::Matrix4f CalibrateCell::calcTransformationMatrix(std::string cameraID, tf::Vector3 position, tf::Quaternion quaternion)
@@ -84,8 +80,6 @@ Eigen::Matrix4f CalibrateCell::calcTransformationMatrix(std::string cameraID, tf
                     rotation.getColumn(0).getZ(), rotation.getColumn(1).getZ(), rotation.getColumn(2).getZ(),  position.getZ(),
                     0,          0,          0,       1;
 
-    //std::cout << cameraID << std::endl;
-    //std::cout << transTmp << std::endl;
     double roll, pitch, yaw;
     std::cout << "Rotation RPY: " << std::endl;
     rotation.getRPY(roll, pitch, yaw);
@@ -106,12 +100,9 @@ void CalibrateCell::addNewTransformation(std::string cameraID, tf::Vector3 posit
         positions[0] += position;
         quaternions[0] += quaternion;
         msgs++;
-        //if(msgs == 1){
-            calcTransformationMatrix(cameraID, position, quaternion);
-            cameraName = cameraID;
-        //}
+        calcTransformationMatrix(cameraID, position, quaternion);
+        cameraName = cameraID;
     }
-
 }
 
 void CalibrateCell::averageRotations()
@@ -126,7 +117,6 @@ void CalibrateCell::averageRotations()
     std::vector<float> zPos(quaternions.size());
 
     float div = 1.0f/(float)nrOfMsgs;
-    //std::cout << div << std::endl;
 
     for(int i=0; i<quaternions.size(); i++){
         x[i] = quaternions.at(i).getX()*div;
@@ -148,7 +138,7 @@ void CalibrateCell::averageRotations()
     }
 
     char chars[] = "/";
-
+    
     for (unsigned int i = 0; i < strlen(chars); ++i)
     {
         cameraName.erase (std::remove(cameraName.begin(), cameraName.end(), chars[i]), cameraName.end());
@@ -157,8 +147,8 @@ void CalibrateCell::averageRotations()
     std::string tmp = "/home/minions/";
     tmp.append(cameraName);
     tmp.append(".txt");
-
     std::ofstream file(tmp.c_str());
+    
     if (file.is_open())
     {
         for(int i=0; i<transformationMatrices.size(); i++){
@@ -167,20 +157,13 @@ void CalibrateCell::averageRotations()
         }
 
     }
-
     std::cout << "Done calibrating, wrote matrix to file: ";
     std::cout << tmp << std::endl;
 
 }
-
-
 
 int main(int argc, char **argv){
     CalibrateCell cell(argc, argv);
     cell.init();
     cell.run();
 }
-
-
-
-

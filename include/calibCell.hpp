@@ -9,35 +9,72 @@
 #include <iostream>
 #include <fstream>
 
-
+/*!
+ * \brief The CalibrateCell class
+ */
 class CalibrateCell{
 public:
+    /*!
+     * \brief Constructor for CalibrateCell class.
+     * \param argc Initialization argument
+     * \param argv Initialization argument
+     */
     CalibrateCell(int argc, char** argv);
+
+    /*!
+     * \brief Deconstructor for CalibrateCell class.
+     */
     virtual ~CalibrateCell();
+
+    /*!
+     * \brief Initialization method for the ROS node.
+     * \return Returns true if initialization is OK. Returns false if
+     * initialization fails.
+     */
     bool init();
+
+    /*!
+     * \brief Starts the ROS node and loops.
+     */
     void run();
 
+    /*!
+     * \brief Callback method from ar_track_alvar
+     * \param cam_pos position of the AR tag relative to the camera
+     */
     void camPosCallback1(const ar_track_alvar_msgs::AlvarMarkersConstPtr& cam_pos);
 
-
 private:
-    ros::Subscriber subPose;
+    int init_argc; //!< Initialization arguments
+    char** init_argv; //!< Initialization arguments
+    ros::Subscriber subPose; //!< ROS subscriber to the pose message
+    int nrOfMsgs; //!< Number of messages to average
+    int msgs; //!< Current messages averaged
+    std::vector<tf::Vector3> positions; //!< Vector containing the pose position (X,Y,Z)
+    std::vector<tf::Quaternion> quaternions; //!< Vector containing the pose orientation in quaternions
+    std::string cameraName; //!< Name of the camera
+    std::vector<Eigen::Matrix4f> transformationMatrices; //!< Vector containing the pose in transformation matrices
 
-    int nrOfMsgs;
-    int msgs;
-
-    std::vector<tf::Vector3> positions;
-    std::vector<tf::Quaternion> quaternions;
-    std::string cameraName;
-    std::vector<Eigen::Matrix4f> transformationMatrices;
-
+    /*!
+     * \brief Converts a position and quaternion vector to a 4x4 transformation matrix.
+     * \param cameraID the name of the camera
+     * \param position the pose position vector
+     * \param quaternion the pose orientation vector in quaternions
+     * \return
+     */
     Eigen::Matrix4f calcTransformationMatrix(std::string cameraID, tf::Vector3 position, tf::Quaternion quaternion);
 
+    /*!
+     * \brief Adds a new transformation (position and orientation) to the private vectors positions and quaternions.
+     * \param cameraID the name of the camera
+     * \param position the pose position vector
+     * \param quaternion the pose orientation vector in quaternions
+     */
     void addNewTransformation(std::string cameraID, tf::Vector3 position, tf::Quaternion quaternion);
 
+    /*!
+     * \brief Takes the average of the vector of position and orientation and writes the
+     * result as a 4x4 transformation matrix to a .txt file.
+     */
     void averageRotations();
-
-    int init_argc;
-    char** init_argv;
-
 };

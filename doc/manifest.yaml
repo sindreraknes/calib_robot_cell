@@ -1,0 +1,17 @@
+actions: []
+authors: ''
+brief: ''
+bugtracker: ''
+depends:
+- std_msgs
+- rospy
+- roscpp
+- catkin
+description: The calib_robot_cell package
+license: TODO
+maintainers: minions <minions@todo.todo>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''
